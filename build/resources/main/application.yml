@@ -1,0 +1,5 @@
+jdbc:
+  url: "jdbc:postgresql://localhost:5432/filesharing"
+  username: "postgres"
+  password: "postgres"
+  driver: "org.postgresql.Driver"

@@ -13,13 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class Injector {
-    private static final Map<Class<?>, Object> services = new HashMap<>();
+    private static final Map<Class<?>, Object> context = new HashMap<>();
 
     public static void inject(Object target) {
         for(Field field : target.getClass().getDeclaredFields()) {
             if(field.isAnnotationPresent(Autowired.class)) {
                 Class<?> type = field.getType();
-                Object service = services.get(type);
+                Object service = context.get(type);
 
                 if(service == null) {
                     throw new IllegalStateException("There is no registered bean for " + type);
@@ -45,13 +45,38 @@ public class Injector {
 
         Set<Class<?>> beanClasses = new HashSet<>();
         beanClasses.addAll(reflections.getTypesAnnotatedWith(Service.class));
+        beanClasses.addAll(reflections.getTypesAnnotatedWith(Repository.class));
 
         for(Class<?> clazz : beanClasses) {
             try {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
-                services.put(clazz, instance);
+                context.put(clazz, instance);
             } catch (Exception e) {
                 throw new RuntimeException("Couldn't create bean " + clazz.getName(), e);
+            }
+        }
+
+        for (Object bean : context.values()) {
+            injectFields(bean);
+        }
+    }
+
+    private static void injectFields(Object target) {
+        for (Field field : target.getClass().getDeclaredFields()) {
+            if (field.isAnnotationPresent(Autowired.class)) {
+                Class<?> type = field.getType();
+                Object dependency = context.get(type);
+                if (dependency == null) {
+                    throw new IllegalStateException(
+                            "No bean of type " + type + " found for injection into " + target.getClass()
+                    );
+                }
+                field.setAccessible(true);
+                try {
+                    field.set(target, dependency);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
