@@ -1,12 +1,11 @@
 package org.godea.controllers;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.ServletSecurity;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.godea.di.Autowired;
-import org.godea.di.InjectedServlet;
+import org.godea.di.Controller;
+import org.godea.di.Route;
 import org.godea.services.RegisterService;
 
 import java.io.IOException;
@@ -33,22 +32,30 @@ String findAllUsers = "SELECT * from users";
                     }
  */
 
-@WebServlet("/api/*")
-@ServletSecurity
-public class RegisterController extends InjectedServlet {
+@Controller(path = "/api")
+//@WebServlet("/api/*")
+//@ServletSecurity
+public class RegisterController {
     @Autowired
     RegisterService registerService;
 
-    public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Route(path = "/register", method = "GET")
+    public void getResponse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        registerService.handleGet(req, resp);
+    }
+
+    @Route(path = "/register", method = "POST")
+    public void postResponse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getMethod();
         String path = req.getPathInfo();
 
         if (path == null) {
-            path = "/";
+            path = "/api/register";
         }
 
         switch (method) {
-            case "GET" -> registerService.handleGet(path, req, resp);
+//            case "GET" -> registerService.handleGet(path, req, resp);
+            case "POST" -> registerService.handlePost(req, resp);
         }
     }
 }

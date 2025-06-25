@@ -46,6 +46,7 @@ public class Injector {
         Set<Class<?>> beanClasses = new HashSet<>();
         beanClasses.addAll(reflections.getTypesAnnotatedWith(Service.class));
         beanClasses.addAll(reflections.getTypesAnnotatedWith(Repository.class));
+        beanClasses.addAll(reflections.getTypesAnnotatedWith(Controller.class));
 
         for(Class<?> clazz : beanClasses) {
             try {
@@ -79,5 +80,9 @@ public class Injector {
                 }
             }
         }
+    }
+
+    public static Object getBean(Class<?> type) {
+        return context.get(type);
     }
 }

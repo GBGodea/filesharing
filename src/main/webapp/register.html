@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="/scripts/JsonForm.js" defer></script>
 </head>
 <body>
-    <form method="post" action="/RegisterController">
-        <p>
-            <label for="email">email:</label>
-            <input type="email" name="email" id="email" required/>
-        </p>
-        <p>
-            <label for="password">password:</label>
-            <input type="password" name="password" id="password" required>
-        </p>
-    </form>
+<form id="registerForm">
+    <p>
+        <label for="email">email:</label>
+        <input type="email" name="email" id="email" required/>
+    </p>
+    <p>
+        <label for="password">password:</label>
+        <input type="password" name="password" id="password" required>
+    </p>
+    <button type="submit">Регистрация</button>
+</form>
 </body>
 </html>

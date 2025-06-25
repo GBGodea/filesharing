@@ -1,8 +1,6 @@
 package org.godea.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -10,12 +8,18 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
     String email;
     String password;
 
-    public void setId(UUID id) {
-        this.id = id;
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    public User() {
+
     }
 
     public void setEmail(String email) {
@@ -26,4 +30,11 @@ public class User {
         this.password = password;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
