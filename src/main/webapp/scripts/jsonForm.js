@@ -1,4 +1,4 @@
-console.log("JsonForm.js loaded!");
+console.log("jsonForm.js loaded!");
 
 document.getElementById("registerForm").addEventListener("submit", (e) => {
     e.preventDefault();

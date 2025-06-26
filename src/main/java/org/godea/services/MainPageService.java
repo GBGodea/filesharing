@@ -41,7 +41,7 @@ public class MainPageService implements HtmlRenderer, JsonResponser {
     }
 
     public void getMainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        renderHtml(req, resp, "./main.html");
+        renderHtml(req, resp, "./filepage.html");
     }
 
     @Override

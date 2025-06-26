@@ -105,9 +105,9 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private class Handler {
-        private Object clazz;
-        private Method method;
+    private static class Handler {
+        private final Object clazz;
+        private final Method method;
 
         public Handler(Object clazz, Method method) {
             this.clazz = clazz;

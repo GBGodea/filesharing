@@ -46,16 +46,6 @@ public class RegisterController {
 
     @Route(path = "/register", method = "POST")
     public void postResponse(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String method = req.getMethod();
-        String path = req.getPathInfo();
-
-        if (path == null) {
-            path = "/api/register";
-        }
-
-        switch (method) {
-//            case "GET" -> registerService.handleGet(path, req, resp);
-            case "POST" -> registerService.handlePost(req, resp);
-        }
+         registerService.handlePost(req, resp);
     }
 }

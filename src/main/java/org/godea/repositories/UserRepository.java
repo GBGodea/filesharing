@@ -1,10 +1,8 @@
 package org.godea.repositories;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import org.godea.di.Repository;
 import org.godea.models.User;
-import org.hibernate.annotations.processing.Pattern;
 
 import java.util.Optional;
 import java.util.UUID;

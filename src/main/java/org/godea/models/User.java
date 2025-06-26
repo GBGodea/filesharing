@@ -12,10 +12,14 @@ public class User {
     UUID id;
     String email;
     String password;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", nullable = false)
+    Role role;
 
-    public User(String email, String password) {
+    public User(String email, String password, Role role) {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public User() {
@@ -30,6 +34,8 @@ public class User {
         this.password = password;
     }
 
+    public void setRole(Role role) { this.role = role; }
+
     public UUID getId() {
         return id;
     }
@@ -37,4 +43,5 @@ public class User {
     public String getEmail() {
         return email;
     }
+    public Role getRole() { return role; }
 }
