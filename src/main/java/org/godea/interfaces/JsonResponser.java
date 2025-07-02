@@ -9,4 +9,9 @@ public interface JsonResponser {
                           String characterEncoding,
                           HttpServletResponse resp,
                           Object element) throws IOException;
+
+    default void generateResponseAdapted(String contentType,
+                          String characterEncoding,
+                          HttpServletResponse resp,
+                          Object element) throws IOException {};
 }

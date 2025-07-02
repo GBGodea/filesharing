@@ -33,8 +33,6 @@ String findAllUsers = "SELECT * from users";
  */
 
 @Controller(path = "/api")
-//@WebServlet("/api/*")
-//@ServletSecurity
 public class RegisterController {
     @Autowired
     RegisterService registerService;

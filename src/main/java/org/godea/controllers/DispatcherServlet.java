@@ -1,7 +1,10 @@
 package org.godea.controllers;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,19 +21,11 @@ import org.reflections.util.FilterBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.rmi.ServerException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/*
-Map где хранятся все существующие пути на сервере(путь controller + пути от методов)
-Также создать аннотации Post, Get и т.д., которые будут носить только информацию о методе запроса
-Сам Dispatcher servlet будет просто проверять есть ли в map такой путь, если да, то идти
-к контроллеру, а там и вызывать нужный метод, который помечает данные метод
- */
-
 @WebServlet("/*")
+@MultipartConfig
 public class DispatcherServlet extends HttpServlet {
     private final Map<String, Handler> routes = new HashMap<>();
 
@@ -66,9 +61,11 @@ public class DispatcherServlet extends HttpServlet {
 
     public void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String httpMethod = req.getMethod();
+        String servletPath = req.getServletPath();
         String path = req.getPathInfo();
 
         String real = req.getServletContext().getRealPath(path);
+
         if (real != null) {
             File f = new File(real);
             if (f.exists() && !f.isDirectory()) {
@@ -79,7 +76,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         }
 
-        String key = httpMethod + ":" + path;
+        String key = httpMethod + ":" + servletPath + path;
 
         Handler handler = routes.get(key);
         if(handler == null) {
@@ -89,10 +86,16 @@ public class DispatcherServlet extends HttpServlet {
 
         Method method = handler.method;
         if(method.isAnnotationPresent(Secured.class)) {
-            String requiredRole = method.getAnnotation(Secured.class).role();
-            String userRole = (String) req.getSession().getAttribute("role");
+            Secured sec = method.getAnnotation(Secured.class);
+            Claims claims = (Claims) req.getAttribute("claims");
 
-            if(!requiredRole.equals(userRole)) {
+            if(claims == null) {
+                resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Jwt token is missing or invalid");
+                return;
+            }
+
+            String userRole = claims.get("role", String.class);
+            if(!sec.role().equals(userRole)) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return ;
             }
@@ -101,7 +104,12 @@ public class DispatcherServlet extends HttpServlet {
         try {
             method.invoke(handler.clazz, req, resp);
         } catch(Exception e) {
-            throw new ServerException(e.toString());
+            e.printStackTrace();
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                cause.printStackTrace();
+            }
+            throw new ServletException("Error in handler: " + (cause != null ? cause : e), cause);
         }
     }
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="/styles/form.css">
+    <script src="/scripts/upload.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+    <style>
+        .form-row { margin-bottom: 1em; }
+        label { display: block; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div id="uploadFile_Loader" class="upload-zone">
+    <div id="spinner" class="spinner hidden"></div>
+    <form class="form-upload" id="uploadForm" method="post" enctype="multipart/form-data">
+        <div class="upload-zone_dragover">
+            <p>Перетащите файл сюда</p>
+        </div>
+        <label class="form-upload__label" for="uploadForm_file">
+            <span class="form-upload__title">Или выберите</span>
+            <input class="form-upload__input" id="uploadForm_file" type="file" name="file_name">
+        </label>
+
+        <div class="form-row">
+            <label for="expiresAt">Дата и время истечения</label>
+            <input type="text"
+                   id="expiresAt"
+                   name="expiration_date"
+                   placeholder="Выберите дату и время"
+                   required>
+        </div>
+
+        <button type="submit" class="form-upload__submit">Отправить</button>
+    </form>
+    <div id="linkBox">
+        <h1 style="font-size: 24px">Your link to file:</h1>
+        <a href="" id="link"></a>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#expiresAt", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i:S",
+        enableSeconds: true,
+        time_24hr: true,
+        defaultDate: new Date(),
+        minDate: new Date(Date.now() + 1 * 60 * 1000),
+        onChange: function(selectedDates, dateStr, instance) {
+            const picked = selectedDates[0];
+            const now = Date.now();
+
+            if(
+                picked.getFullYear() === new Date(now).getFullYear() &&
+                picked.getMonth() === new Date(now).getMonth() &&
+                picked.getDate() === new Date(now).getDate()
+            ) {
+                instance.set('minDate', new Date(now + 60000));
+            } else {
+                instance.set('minDate', picked);
+            }
+        }
+    });
+
+    document.getElementById("uploadForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const form = e.target;
+        const fd = new FormData(form);
+
+        try {
+            const resp = await fetch("/api/upload", {
+                method: "POST",
+                credentials: 'include',
+                body: fd
+            });
+            if (!resp.ok) throw new Error(await resp.text());
+            const json = await resp.json();
+            console.log("Успешно:", json);
+            alert("Файл загружен. ID = " + json.id);
+        } catch (err) {
+            alert("Ошибка: " + err.message);
+        }
+    });
+</script>
+</body>
+</html>

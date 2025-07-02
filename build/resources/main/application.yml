@@ -3,3 +3,6 @@ jdbc:
   username: "postgres"
   password: "postgres"
   driver: "org.postgresql.Driver"
+
+jwt:
+  token: "NDUyMzNjOGIzNThiODAxMjE0MDIzMjU5MmM2NjM1MjE1YWZkNDE1MQ=="

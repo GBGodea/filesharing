@@ -10,8 +10,8 @@ import java.io.IOException;
 
 @Service
 public class DefaultService implements HtmlRenderer {
-    public void getPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        renderHtml(req, resp, "/register.html");
+    public void getPage(HttpServletRequest req, HttpServletResponse resp, String path) throws ServletException, IOException {
+        renderHtml(req, resp, path);
     }
 
     @Override

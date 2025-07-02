@@ -8,9 +8,9 @@ public class UserDTO {
     UUID id;
     String email;
 
-    Role role;
+    String role;
 
-    public UserDTO(UUID id, String email, Role role) {
+    public UserDTO(UUID id, String email, String role) {
         this.id = id;
         this.email = email;
         this.role = role;

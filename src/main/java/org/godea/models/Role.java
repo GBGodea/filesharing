@@ -19,4 +19,7 @@ public class Role {
     public Roles getRole() {
         return role;
     }
+    public void setRole(Roles role) {
+        this.role = role;
+    }
 }

@@ -46,7 +46,7 @@ public class RegisterService implements HtmlRenderer, JsonResponser {
         generateResponse("application/json",
                 "UTF-8",
                 resp,
-                new UserDTO(user.getId(), user.getEmail(), user.getRole()));
+                new UserDTO(user.getId(), user.getEmail(), user.getRole().getRole().name()));
     }
 
     private void getRegisterPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
