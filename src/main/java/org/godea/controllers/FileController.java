@@ -14,27 +14,24 @@ import org.godea.services.FileService;
 import java.io.*;
 
 @Controller(path = "/api")
-@Secured
 public class FileController {
     @Autowired
     FileService fileService;
 
     @Route(path = "/file", method = "GET")
+    @Secured
     public void getFilePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         fileService.handleGet(req, resp);
     }
 
-    @Route(path = "/file", method = "POST")
-    public void postFile(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        fileService.handlePost(req, resp);
-    }
-
     @Route(path = "/file/download", method = "GET")
+    @Secured
     public void downloadFile(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         fileService.handleDownload(req, resp);
     }
 
     @Route(path = "/upload", method = "POST")
+    @Secured
     public void uploadFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         fileService.handleUpload(req, resp);
     }

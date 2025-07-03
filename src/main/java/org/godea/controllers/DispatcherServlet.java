@@ -13,6 +13,7 @@ import org.godea.di.Controller;
 import org.godea.di.Injector;
 import org.godea.di.Route;
 import org.godea.di.Secured;
+import org.godea.models.enums.Roles;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -95,7 +96,9 @@ public class DispatcherServlet extends HttpServlet {
             }
 
             String userRole = claims.get("role", String.class);
-            if(!sec.role().equals(userRole)) {
+            int annotationOrd = Roles.valueOf(sec.role()).ordinal();
+            int userOrd = Roles.valueOf(userRole).ordinal();
+            if(!sec.role().equals(userRole) && userOrd < annotationOrd) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return ;
             }

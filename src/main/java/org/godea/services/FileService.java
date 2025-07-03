@@ -38,19 +38,6 @@ public class FileService implements HtmlRenderer, JsonResponser {
         getMainPage(req, resp);
     }
 
-    public void handlePost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        BufferedReader reader = req.getReader();
-        EmailDTO email = gson.fromJson(reader, EmailDTO.class);
-        Optional<User> user = userRepository.findByEmail(email.getEmail());
-
-        if (user.isEmpty()) {
-            String message = "User not found";
-            generateResponse("application/json", "UTF-8", resp, message);
-        } else {
-            generateResponse("application/json", "UTF-8", resp, user.get());
-        }
-    }
-
     public void getMainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         renderHtml(req, resp, "./file.html");
     }
@@ -110,6 +97,13 @@ public class FileService implements HtmlRenderer, JsonResponser {
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }
+        }
+
+        try {
+            fileRepository.incrementDownload(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 

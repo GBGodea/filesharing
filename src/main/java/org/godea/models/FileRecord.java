@@ -34,6 +34,9 @@ public class FileRecord {
     @Column(name = "is_expired", nullable = false)
     private boolean isExpired;
 
+    @Column(name = "download_count", nullable = false)
+    private long downloadCount;
+
     public FileRecord() {
     }
 
@@ -59,6 +62,7 @@ public class FileRecord {
     public LocalDateTime getUploadTime() { return uploadTime; }
     public LocalDateTime getExpirationDate() { return expirationDate; }
     public boolean getIsExpired() { return isExpired; }
+    public long getDownloadCount() { return downloadCount; }
     public void setExpired(boolean exp) {
         isExpired = exp;
     }

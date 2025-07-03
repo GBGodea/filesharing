@@ -1,0 +1,116 @@
+:root {
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --text: #1f2937;
+  --border: #d1d5db;
+  --radius: 6px;
+  --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text);
+  padding: 1rem;
+}
+
+.auth-container {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.auth-container h1 {
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+}
+
+.auth-form .form-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.7rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.redirect-text {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.btn-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+  margin-left: 0.25rem;
+}
+
+.btn-link:hover {
+  color: var(--primary-hover);
+}
+
+.error-text {
+  font-size: 0.9rem;
+  color: crimson;
+  margin-top: 0.5rem;
+}
+
+/* Адаптив */
+@media (max-width: 400px) {
+  .auth-container {
+    padding: 1.5rem;
+  }
+  .btn-primary {
+    font-size: 0.9rem;
+  }
+}

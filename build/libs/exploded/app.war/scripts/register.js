@@ -20,7 +20,7 @@ document.getElementById("registerForm").addEventListener("submit", (e) => {
         }
         return resp.json();
     }).then(result => {
-        location.replace("/login.html")
+        window.location.href = '/api/login';
     }) .catch(err => {
         alert("Error: " + err.message)
     })
