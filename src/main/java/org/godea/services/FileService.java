@@ -6,14 +6,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import org.godea.adapter.LocalDateTimeTypeAdapter;
+import org.godea.adapter.OffsetDateTimeAdapter;
 import org.godea.di.Autowired;
 import org.godea.di.Service;
 import org.godea.interfaces.HtmlRenderer;
 import org.godea.interfaces.JsonResponser;
 import org.godea.models.FileRecord;
-import org.godea.models.User;
-import org.godea.models.dto.EmailDTO;
 import org.godea.repositories.FileRepository;
 import org.godea.repositories.UserRepository;
 
@@ -21,9 +19,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Service
@@ -65,14 +62,17 @@ public class FileService implements HtmlRenderer, JsonResponser {
             return;
         }
 
-        String uploadsDir = "D:\\Doczilla\\SwapFiles\\src\\main\\java\\org\\godea\\uploads";
+        String uploadsDir = System.getenv().getOrDefault("UPLOADS_DIR", "/app/uploads");
         Path filePath = Paths.get(uploadsDir, rec.getStoredName());
         if (!Files.exists(filePath)) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found on server");
             return;
         }
 
-        if (LocalDateTime.now().isAfter(rec.getExpirationDate())) {
+        ZoneId moscowZone = ZoneId.of("Europe/Moscow");
+        OffsetDateTime nowMoscow = OffsetDateTime.now(moscowZone);
+
+        if (nowMoscow.isAfter(rec.getExpirationDate())) {
             fileRepository.updateIsExpired(true, rec.getId());
             rec.setExpired(true);
         }
@@ -111,7 +111,7 @@ public class FileService implements HtmlRenderer, JsonResponser {
         Part filePart = req.getPart("file_name");
         String originalName = filePart.getSubmittedFileName();
         String ext = originalName.substring(originalName.lastIndexOf('.'));
-        String uploadDir = "D:\\Doczilla\\SwapFiles\\src\\main\\java\\org\\godea\\uploads";
+        String uploadDir = System.getenv().getOrDefault("UPLOADS_DIR", "/app/uploads");
 
         File uploads = new File(uploadDir);
         if (!uploads.exists()) uploads.mkdirs();
@@ -126,14 +126,15 @@ public class FileService implements HtmlRenderer, JsonResponser {
         }
 
         String expParam = req.getParameter("expiration_date");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime expirationDate = LocalDateTime.parse(expParam, formatter);
+        OffsetDateTime expirationDate = OffsetDateTime.parse(expParam);
+        ZoneId moscowZone = ZoneId.of("Europe/Moscow");
+        OffsetDateTime moscowTime = expirationDate.atZoneSameInstant(moscowZone).toOffsetDateTime();
 
-        FileRecord rec = saveMetadata(originalName, storedName, filePart.getContentType(), filePart.getSize(), expirationDate);
+        FileRecord rec = saveMetadata(originalName, storedName, filePart.getContentType(), filePart.getSize(), moscowTime);
         generateResponseAdapted("application/json", "UTF-8", resp, rec);
     }
 
-    public FileRecord saveMetadata(String originalName, String storedName, String contentType, long size, LocalDateTime expirationDate) {
+    public FileRecord saveMetadata(String originalName, String storedName, String contentType, long size, OffsetDateTime expirationDate) {
         FileRecord record = new FileRecord(originalName, storedName, contentType, size, expirationDate);
         return fileRepository.save(record);
     }
@@ -164,7 +165,7 @@ public class FileService implements HtmlRenderer, JsonResponser {
     @Override
     public void generateResponseAdapted(String contentType, String characterEncoding, HttpServletResponse resp, Object element) throws IOException {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeAdapter())
                 .create();
         String json = gson.toJson(element);
         resp.setContentType(contentType);

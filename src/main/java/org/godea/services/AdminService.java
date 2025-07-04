@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.godea.adapter.LocalDateTimeTypeAdapter;
+import org.godea.adapter.OffsetDateTimeAdapter;
 import org.godea.di.Autowired;
 import org.godea.di.Service;
 import org.godea.interfaces.HtmlRenderer;
@@ -15,6 +15,7 @@ import org.godea.repositories.FileRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -47,7 +48,7 @@ public class AdminService implements HtmlRenderer, JsonResponser {
     @Override
     public void generateResponse(String contentType, String characterEncoding, HttpServletResponse resp, Object element) throws IOException {
         Gson gson = new Gson().newBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeAdapter())
                 .create();
         String json = gson.toJson(element);
         resp.setContentType(contentType);

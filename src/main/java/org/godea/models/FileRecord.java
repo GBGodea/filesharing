@@ -3,7 +3,7 @@ package org.godea.models;
 import jakarta.persistence.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,10 +26,10 @@ public class FileRecord {
     private long size;
 
     @Column(name = "upload_date", nullable = false)
-    private LocalDateTime uploadTime;
+    private OffsetDateTime uploadTime;
 
     @Column(name = "expiration_date", nullable = false)
-    private LocalDateTime expirationDate;
+    private OffsetDateTime expirationDate;
 
     @Column(name = "is_expired", nullable = false)
     private boolean isExpired;
@@ -40,7 +40,7 @@ public class FileRecord {
     public FileRecord() {
     }
 
-    public FileRecord(String originalName, String storedName, String contentType, long size, LocalDateTime expirationDate) {
+    public FileRecord(String originalName, String storedName, String contentType, long size, OffsetDateTime expirationDate) {
         this.originalName = originalName;
         this.storedName = storedName;
         this.contentType = contentType;
@@ -51,7 +51,7 @@ public class FileRecord {
 
     @PrePersist
     protected void onPrePersist() {
-        this.uploadTime = LocalDateTime.now();
+        this.uploadTime = OffsetDateTime.now();
     }
 
     public UUID getId() { return id; }
@@ -59,8 +59,8 @@ public class FileRecord {
     public String getStoredName() { return storedName; }
     public String getContentType() { return contentType; }
     public long getSize() { return size; }
-    public LocalDateTime getUploadTime() { return uploadTime; }
-    public LocalDateTime getExpirationDate() { return expirationDate; }
+    public OffsetDateTime getUploadTime() { return uploadTime; }
+    public OffsetDateTime getExpirationDate() { return expirationDate; }
     public boolean getIsExpired() { return isExpired; }
     public long getDownloadCount() { return downloadCount; }
     public void setExpired(boolean exp) {
